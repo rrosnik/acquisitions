@@ -1,5 +1,7 @@
 import js from '@eslint/js';
 import { defineConfig } from 'eslint/config';
+import prettierConfig from 'eslint-config-prettier';
+
 
 export default defineConfig([
   js.configs.recommended,
@@ -21,10 +23,6 @@ export default defineConfig([
       },
     },
     rules: {
-      indent: ['error', 2, { SwitchCase: 1 }],
-      'linebreak-style': ['error', 'unix'],
-      quotes: ['error', 'single'],
-      semi: ['error', 'always'],
       'no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
       'no-console': 'off',
       'prefer-const': 'error',
@@ -48,6 +46,7 @@ export default defineConfig([
       },
     },
   },
+  prettierConfig,
   {
     ignores: ['node_modules/**', 'coverage/**', 'logs/**', 'drizzle/**'],
   },
