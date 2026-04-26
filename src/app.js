@@ -8,7 +8,17 @@ import cookieParser from 'cookie-parser';
 const app = express();
 
 app.use(helmet());
-app.use(cors());
+const allowedOrigins = (process.env.CORS_ORIGINS || '')
+  .split(',')
+  .map(o => o.trim())
+  .filter(Boolean);
+
+app.use(
+  cors({
+    origin: allowedOrigins.length ? allowedOrigins : false,
+    credentials: true,
+  })
+);
 app.use(express.json());
 app.use(express.urlencoded());
 app.use(cookieParser());
@@ -21,7 +31,7 @@ app.use(
 
 app.get('/', (req, res) => {
   logger.info('Hello from Acquisitions!');
-  res.status(200).send('Hello from Acquisitions!');
+  return res.status(200).send('Hello from Acquisitions!');
 });
 
 export default app;
