@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 
 # Production deployment script for Acquisition App
 # This script starts the application in production mode with Neon Cloud Database
@@ -28,14 +29,18 @@ echo ""
 # Start production environment
 docker compose -f docker-compose.prod.yml up --build -d
 
-# Wait for DB to be ready (basic health check)
-echo "⏳ Waiting for Neon Local to be ready..."
-sleep 5
+# Wait for the app container to become healthy before running migrations  
+echo "⏳ Waiting for the application to be ready..."  
+for i in {1..30}; do  
+  if curl -fsS http://localhost:8080/health >/dev/null 2>&1; then  
+    break  
+  fi  
+  sleep 2  
+done  
 
 # Run migrations with Drizzle
 echo "📜 Applying latest schema with Drizzle..."
-npm run db:migrate
-
+NODE_ENV=production npm run db:migrate
 echo ""
 echo "🎉 Production environment started!"
 echo "   Application: http://localhost:3000"

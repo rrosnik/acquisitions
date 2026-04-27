@@ -80,7 +80,6 @@ NEON_API_KEY=replace-with-your-neon-api-key
 NEON_PROJECT_ID=replace-with-your-neon-project-id
 BRANCH_ID=
 
-ARCJET_KEY=
 ARCJET_ENV=development
 ```
 

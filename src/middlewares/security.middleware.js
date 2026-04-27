@@ -22,6 +22,10 @@ export const securityMiddleware = async (req, res, next) => {
         limit = 5;
         message = 'Guest request limit exceeded (5 per min). Slow down.';
         break;
+      default:
+        limit = 5;
+        message = 'Request limit exceeded (5 per min). Slow down.';
+        break;
     }
 
     const client = arcjet.withRule(
@@ -56,7 +60,7 @@ export const securityMiddleware = async (req, res, next) => {
       });
       return res.status(403).json({
         error: 'Forbidden',
-        message: 'Request blocked byy security policy',
+        message: 'Request blocked by security policy',
       });
     }
 
