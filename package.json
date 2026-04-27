@@ -6,7 +6,7 @@
   "type": "module",
   "imports": {
     "#config/*": "./src/config/*",
-    "#controller/*": "./src/controller/*",
+    "#controllers/*": "./src/controllers/*",
     "#middlewares/*": "./src/middlewares/*",
     "#models/*": "./src/models/*",
     "#routes/*": "./src/routes/*",
@@ -15,7 +15,7 @@
     "#validations/*": "./src/validations/*"
   },
   "scripts": {
-    "dev": "node --watch src/index.js",
+    "dev": "nodemon --legacy-watch src/index.js",
     "start": "node src/index.js",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",

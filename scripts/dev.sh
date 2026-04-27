@@ -25,7 +25,7 @@ mkdir -p .neon_local
 
 # Add .neon_local to .gitignore if not already present
 if ! grep -q ".neon_local/" .gitignore 2>/dev/null; then
-    printf "\n\n.neon_local/\n" >> .gitignore
+    printf "\n\n\n.neon_local/\n\n" >> .gitignore
     echo "✅ Added .neon_local/ to .gitignore"
 fi
 
@@ -34,32 +34,20 @@ echo "   - Neon Local proxy will create an ephemeral database branch"
 echo "   - Application will run with hot reload enabled"
 echo ""
 
-# Start development environment (detached so we can run follow-up commands)
-docker compose -f docker-compose.dev.yml up --build -d
+# Run migrations with Drizzle
+echo "📜 Applying latest schema with Drizzle..."
+npm run db:migrate
 
-# Wait for the database to be ready (compose healthcheck already gates app, but be explicit)
+# Wait for the database to be ready
 echo "⏳ Waiting for the database to be ready..."
-until docker compose -f docker-compose.dev.yml exec -T neon-local \
-    psql -U neon -d neondb -c 'SELECT 1' >/dev/null 2>&1; do
-  sleep 1
-done
+docker compose exec neon-local psql -U neon -d neondb -c 'SELECT 1'
 
-# Run migrations with Drizzle (now that the DB is reachable)
-echo "📜 Applying latest schema with Drizzle..."
-npm run db:migrate
-
-# Tail logs in foreground
-docker compose -f docker-compose.dev.yml logs -f app
-# Run migrations with Drizzle (now that the DB is reachable)
-echo "📜 Applying latest schema with Drizzle..."
-npm run db:migrate
-
-# Tail logs in foreground
-docker compose -f docker-compose.dev.yml logs -f app
+# Start development environment
+docker compose -f docker-compose.dev.yml up --build
 
 echo ""
 echo "🎉 Development environment started!"
-echo "   Application: http://localhost:5173"
+echo "   Application: http://localhost:8080"
 echo "   Database: postgres://neon:npg@localhost:5432/neondb"
 echo ""
 echo "To stop the environment, press Ctrl+C or run: docker compose down"
