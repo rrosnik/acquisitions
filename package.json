@@ -28,7 +28,8 @@
     "db:studio": "drizzle-kit studio",
     "db:push": "drizzle-kit push",
     "dev:docker": "bash ./scripts/dev.sh",
-    "prod:docker": "bash ./scripts/prod.sh"
+    "prod:docker": "bash ./scripts/prod.sh",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
   },
   "keywords": [],
   "author": "",
