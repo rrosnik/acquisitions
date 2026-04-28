@@ -23,7 +23,6 @@ export const getAllUsers = async () => {
 
 export const getUserById = async id => {
   try {
-    console.log({ id }, 'DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD');
     const [user] = await db
       .select({
         id: users.id,
@@ -68,7 +67,7 @@ export const updateUser = async (id, updates) => {
     // Add updated_at timestamp
     const updateData = {
       ...updates,
-      updated_at: new Date(),
+      UpdatedAt: new Date(),
     };
 
     const [updatedUser] = await db

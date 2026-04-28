@@ -45,7 +45,7 @@ export const fetchUserById = async (req, res, next) => {
     const { id } = validationResult.data;
     const user = await getUserById(id);
 
-    logger.info(`User ${user.email} retrieved successfully`);
+    logger.info({ userId: user.id }, 'User retrieved successfully');
     res.json({
       message: 'User retrieved successfully',
       user,
@@ -64,6 +64,29 @@ export const fetchUserById = async (req, res, next) => {
 export const updateUserById = async (req, res, next) => {
   try {
     logger.info(`Updating user: ${req.params.id}`);
+
+    // Authorization checks
+    if (!req.user) {
+      return res.status(401).json({
+        error: 'Authentication required',
+        message: 'You must be logged in to update user information',
+      });
+    }
+    // Allow users to update only their own information (except role)
+    if (req.user.role !== 'admin' && req.user.id !== id) {
+      return res.status(403).json({
+        error: 'Access denied',
+        message: 'You can only update your own information',
+      });
+    }
+
+    // Only admin users can change roles
+    if (updates.role && req.user.role !== 'admin') {
+      return res.status(403).json({
+        error: 'Access denied',
+        message: 'Only administrators can change user roles',
+      });
+    }
 
     // Validate the user ID parameter
     const idValidationResult = userIdSchema.safeParse({ id: req.params.id });
@@ -88,30 +111,6 @@ export const updateUserById = async (req, res, next) => {
     const { id } = idValidationResult.data;
     const updates = updateValidationResult.data;
 
-    // Authorization checks
-    if (!req.user) {
-      return res.status(401).json({
-        error: 'Authentication required',
-        message: 'You must be logged in to update user information',
-      });
-    }
-
-    // Allow users to update only their own information (except role)
-    if (req.user.role !== 'admin' && req.user.id !== id) {
-      return res.status(403).json({
-        error: 'Access denied',
-        message: 'You can only update your own information',
-      });
-    }
-
-    // Only admin users can change roles
-    if (updates.role && req.user.role !== 'admin') {
-      return res.status(403).json({
-        error: 'Access denied',
-        message: 'Only administrators can change user roles',
-      });
-    }
-
     // Remove role from updates if non-admin user is trying to update their own profile
     if (req.user.role !== 'admin') {
       delete updates.role;
@@ -119,7 +118,7 @@ export const updateUserById = async (req, res, next) => {
 
     const updatedUser = await updateUser(id, updates);
 
-    logger.info(`User ${updatedUser.email} updated successfully`);
+    logger.info({ userId: updatedUser.id }, 'User updated successfully');
     res.json({
       message: 'User updated successfully',
       user: updatedUser,
@@ -181,7 +180,7 @@ export const deleteUserById = async (req, res, next) => {
 
     const deletedUser = await deleteUser(id);
 
-    logger.info(`User ${deletedUser.email} deleted successfully`);
+    logger.info({ userId: deletedUser.id }, 'User deleted successfully');
     res.json({
       message: 'User deleted successfully',
       user: deletedUser,
