@@ -99,7 +99,7 @@ jobs:
           echo '```bash' >> $GITHUB_STEP_SUMMARY
           echo 'docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest' >> $GITHUB_STEP_SUMMARY
           echo '```' >> $GITHUB_STEP_SUMMARY
-      
+
       - name: Build failure notification
         if: failure()
         run: |

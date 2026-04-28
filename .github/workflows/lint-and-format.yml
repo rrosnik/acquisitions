@@ -9,6 +9,12 @@ on:
     branches:
       - main
       - staging
+  workflow_dispatch:
+    inputs:
+      tag_suffix:
+        description: 'Additional tag suffix (optional)'
+        required: false
+        type: string
 
 jobs:
   lint-and-format:
